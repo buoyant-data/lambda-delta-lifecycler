@@ -1,8 +1,28 @@
 [package]
 name = "lambda-delta-lifecycler"
+description = "Simple AWS Lambda for expiring older objects in Delta tables"
 version = "0.1.0"
+authors = ["R Tyler Croy <rtyler@brokenco.de>"]
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license = "AGPL-3.0-or-later"
 
 [dependencies]
+aws_lambda_events = { version = "0.7" }
+chrono = "*"
+deltalake = { version = "0.11.0", features = ["arrow", "parquet", "s3"]}
+lambda_runtime = { version = "0.7" }
+log = "0.4"
+pretty_env_logger = "0.4"
+rusoto_core = { version = "*", default-features = false, features = ["rustls"] }
+rusoto_credential = "*"
+rusoto_s3 = { version = "*", default-features = false, features = ["rustls"]}
+serde = { version = "*", features = ["rc"]}
+serde_json = "1"
+tokio = { version = "1", features = ["macros"] }
+
+[profile.release]
+panic = "abort"
+lto = true
+codegen-units = 1
+incremental = false
+opt-level = "z"

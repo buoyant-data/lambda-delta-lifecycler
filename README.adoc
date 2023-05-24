@@ -1,0 +1,71 @@
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:toc: macro
+
+= Delta Lifecycler
+
+This Lambda function can be used in conjunction with AWS S3 lifecycle policies
+to implement safe and automatic object expiration in a configured
+link:https://delta.io[Delta Lake] table. Consult the `deployment.tf` file for
+an example of how to provision the function in AWS.
+
+toc::[]
+
+== Building
+
+Building and testing the Lambda can be done with cargo: `cargo test build`.
+
+In order to deploy this in AWS Lambda, it must first be built with the `cargo
+lambda` command line tool, e.g.:
+
+[source,bash]
+----
+cargo lambda build --release --output-format zip
+----
+
+This will produce the file: `target/lambda/lambda-delta-lifecycler/bootstrap.zip`
+
+== Infrastructure
+
+The `deployment.tf` file contains the necessary Terraform to provision the
+function, a DynamoDB table for locking, and IAM permissions. This Terraform
+does *not* provision an S3 bucket to optimize.
+
+After configuring the necessary authentication for Terraform, the following
+steps can be used to provision:
+
+[source,bash]
+----
+cargo lambda build --release --output-format zip
+terraform init
+terraform plan
+terraform apply
+----
+
+=== Environment variables
+
+The following environment variables must be set for the function to run properly
+
+|===
+| Name | Value | Notes
+
+| `DATALAKE_LOCATION`
+| `s3://my-bucket-name/databases/bronze/http`
+| The `s3://` URL of the desired table to optimize.
+
+
+| `AWS_S3_LOCKING_PROVIDER`
+| `dynamodb`
+| This instructs the `deltalake` crate to use DynamoDB for locking to provide consistent writes into s3.
+
+|===
+
+== Licensing
+
+This repository is intentionally licensed under the link:https://www.gnu.org/licenses/agpl-3.0.en.html[AGPL 3.0]. If your organization is interested in re-licensing this function for re-use, contact me via email for commercial licensing terms: `rtyler@brokenco.de`
+
