@@ -1,1 +1,4 @@
 /target
+terraform.tfvars
+.terraform*
+terraform.tfstate*

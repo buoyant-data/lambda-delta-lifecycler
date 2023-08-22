@@ -7,6 +7,7 @@ edition = "2021"
 license = "AGPL-3.0-or-later"
 
 [dependencies]
+anyhow = "*"
 aws_lambda_events = { version = "0.7" }
 chrono = "*"
 deltalake = { version = "0.11.0", features = ["arrow", "parquet", "s3"]}
@@ -19,6 +20,7 @@ rusoto_s3 = { version = "*", default-features = false, features = ["rustls"]}
 serde = { version = "*", features = ["rc"]}
 serde_json = "1"
 tokio = { version = "1", features = ["macros"] }
+urlencoding = "2"
 
 [profile.release]
 panic = "abort"
